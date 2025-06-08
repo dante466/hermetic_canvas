@@ -6,6 +6,7 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  error?: Error;
 }
 
 class WebGLErrorBoundary extends Component<Props, State> {
@@ -13,9 +14,8 @@ class WebGLErrorBoundary extends Component<Props, State> {
     hasError: false
   };
 
-  public static getDerivedStateFromError(_: Error): State {
-    // Update state so the next render will show the fallback UI.
-    return { hasError: true };
+  public static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -26,10 +26,9 @@ class WebGLErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div style={{
-          width: '100%',
-          height: '100%',
+          width: '100vw',
+          height: '100vh',
           display: 'flex',
-          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: '#111',
@@ -37,8 +36,8 @@ class WebGLErrorBoundary extends Component<Props, State> {
           fontFamily: 'monospace'
         }}>
           <h1>Something went wrong.</h1>
-          <p>Your device may not support WebGL, or the context was lost.</p>
-          <p>Please try refreshing the page.</p>
+          <p>A WebGL error occurred. Please try refreshing the page.</p>
+          {this.state.error && <pre>{this.state.error.message}</pre>}
         </div>
       );
     }

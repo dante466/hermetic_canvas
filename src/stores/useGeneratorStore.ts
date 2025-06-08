@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 import * as THREE from 'three'
 
-type GeneratorState = {
+interface GeneratorState {
   // Active state
   activeEngine: string
   activeGenerators: string[]

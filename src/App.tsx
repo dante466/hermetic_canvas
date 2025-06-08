@@ -1,54 +1,24 @@
-import { useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import { Stats } from '@react-three/drei'
-import { Leva, useControls } from 'leva'
-import * as THREE from 'three'
+import { Leva } from 'leva'
 
-import WebGLErrorBoundary from '@/components/ui/WebGLErrorBoundary'
-import { SACRED } from '@/utils/math/constants'
-
-function Scene() {
-  const cubeRef = useRef<THREE.Mesh>(null!)
-
-  const { rotationSpeed } = useControls({
-    rotationSpeed: {
-      value: 0.5,
-      min: 0,
-      max: 2,
-      step: 0.1,
-      label: 'Rotation Speed'
-    }
-  })
-
-  useFrame((_state, delta) => {
-    if (cubeRef.current) {
-      cubeRef.current.rotation.x += delta * rotationSpeed;
-      cubeRef.current.rotation.y += delta * rotationSpeed;
-    }
-  })
-
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <mesh ref={cubeRef}>
-        <boxGeometry args={[1, SACRED.PHI, 1 / SACRED.PHI]} />
-        <meshStandardMaterial color="gold" />
-      </mesh>
-    </>
-  )
-}
+import './index.css'
+import { useGeneratorStore } from './stores/useGeneratorStore'
+import { ParticleEngine } from './components/generators/ParticleEngine/ParticleEngine'
+import WebGLErrorBoundary from './components/ui/WebGLErrorBoundary'
 
 function App() {
+  const { particleCount } = useGeneratorStore()
+
   return (
     <WebGLErrorBoundary>
       <Leva collapsed />
       <Canvas
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        camera={{ position: [0, 0, 4] }}
-        style={{ background: '#000000' }}
+        camera={{ position: [0, 0, 15], fov: 75 }}
       >
-        <Scene />
+        <color attach="background" args={['#000000']} />
+        <ParticleEngine count={particleCount} />
       </Canvas>
       <Stats />
     </WebGLErrorBoundary>
