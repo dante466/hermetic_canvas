@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 import * as THREE from 'three'
+import { ColorPalette } from '@/utils/color'
 
 interface GeneratorState {
   // Active state
@@ -12,13 +13,17 @@ interface GeneratorState {
   particleCount: number
   particleSize: number
   particleSpeed: number
-  colorPalette: string[]
+  colorPalette: ColorPalette
   
   // Refs for non-reactive data
   particleData: React.RefObject<Float32Array>
   
   // Blend modes
   blendMode: 'normal' | 'additive' | 'multiply' | 'screen'
+  
+  // Emitters
+  emissionShape: 'point' | 'sphere' | 'box' | 'spiral'
+  emissionRate: number
   
   // Actions
   setEngine: (engine: string) => void
@@ -35,11 +40,13 @@ export const useGeneratorStore = create<GeneratorState>()(
     activeGenerators: ['particles'],
     isPlaying: true,
     particleCount: 10000,
-    particleSize: 1,
+    particleSize: 1.5,
     particleSpeed: 1,
-    colorPalette: ['#FF006E', '#FB5607', '#FFBE0B', '#8338EC', '#3A86FF'],
+    colorPalette: 'sacredFire',
     particleData: { current: null },
     blendMode: 'additive',
+    emissionShape: 'point',
+    emissionRate: 5000,
     qualityTier: 'high',
     autoQuality: true,
     
